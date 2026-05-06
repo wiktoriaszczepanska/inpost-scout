@@ -46,10 +46,6 @@ class Point:
 
 
 def point_from_dict(raw: dict) -> Point | None:
-    """
-    Build a Point from a raw API response dict.
-    Returns None if the raw data is missing critical fields.
-    """
     try:
         loc = raw.get("location") or {}
         addr = raw.get("address") or {}
@@ -70,15 +66,35 @@ def point_from_dict(raw: dict) -> Point | None:
             line2=addr.get("line2", ""),
         )
 
-        # Skip points with no valid coordinates
         if location.latitude == 0 and location.longitude == 0:
+            return None
+
+        # type bywa listą lub stringiem
+        raw_type = raw.get("type", "")
+        if isinstance(raw_type, list):
+            point_type = ", ".join(raw_type) if raw_type else ""
+        else:
+            point_type = raw_type or ""
+
+        # 24/7 — API używa różnych nazw pola
+        is_24h = bool(
+            raw.get("is_next_24h")
+            or raw.get("is24h")
+            or raw.get("open_24h")
+            or raw.get("247")
+        )
+
+        # filtr kraju po kodzie pocztowym (API nie filtruje idealnie)
+        post_code = address.post_code or ""
+        country = raw.get("country_code") or raw.get("country") or ""
+        if country and country.upper() not in ("PL", ""):
             return None
 
         return Point(
             name=raw.get("name", ""),
-            type=raw.get("type", ""),
+            type=point_type,
             status=raw.get("status", ""),
-            is_next_24h=bool(raw.get("is_next_24h", False)),
+            is_next_24h=is_24h,
             location=location,
             address=address,
             functions=raw.get("functions") or [],
@@ -86,3 +102,4 @@ def point_from_dict(raw: dict) -> Point | None:
         )
     except (TypeError, ValueError, KeyError):
         return None
+
