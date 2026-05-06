@@ -1,0 +1,28 @@
+# Cache
+.inpost_cache.json
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Generated maps
+*.html
+!docs/
+
+# Environment
+.env

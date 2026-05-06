@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inpost-scout"
+version = "1.0.0"
+description = "CLI tool for exploring InPost parcel points across Poland"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31.0",
+    "click>=8.1.7",
+    "rich>=13.7.0",
+    "folium>=0.16.0",
+]
+
+[project.optional-dependencies]
+ai = ["anthropic>=0.25.0"]
+dev = ["pytest>=8.0.0"]
+
+[project.scripts]
+inpost-scout = "inpost_scout.cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["inpost_scout*"]
